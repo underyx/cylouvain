@@ -73,7 +73,7 @@ def best_partition(graph, resolution=1.):
             new_partition[j] = partition[dendrogram[-i][j]]
         partition = new_partition
 
-    if type(graph) == nx.classes.graph.Graph:
+    if type(graph) in nx_types:
         return {node: partition[i] for (i, node) in enumerate(graph.nodes())}
     else:
         return partition
