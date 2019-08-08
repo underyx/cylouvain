@@ -10,7 +10,10 @@ from ._louvain import modularity as cython_modularity
 from scipy import sparse
 import numpy as np
 import networkx as nx
-
+try:
+    import cynetworkx as cynx
+except ImportError:
+    cynx = None
 
 def best_partition(graph, resolution=1.):
     """
@@ -46,11 +49,15 @@ def best_partition(graph, resolution=1.):
     Uses a Cython version of the Louvain algorithm.
 
     """
+    nx_types = {nx.classes.graph.Graph}
+    if cynx:
+        nx_types.add(cynx.classes.graph.Graph)
+
     if type(graph) == sparse.csr_matrix:
         adj_matrix = graph
     elif type(graph) == np.ndarray:
         adj_matrix = sparse.csr_matrix(graph)
-    elif type(graph) == nx.classes.graph.Graph:
+    elif type(graph) in nx_types:
         adj_matrix = nx.adj_matrix(graph)
     else:
         raise TypeError(
